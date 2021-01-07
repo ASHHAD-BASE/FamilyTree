@@ -1,0 +1,85 @@
+<style type="text/css">
+*{margin:0;padding:0;}
+svg{position:relative;width:100%;height:100%;}
+circle{
+transform-box: fill-box;
+transform-origin: center;
+}
+circle:active{
+  transform:scale(.8);
+  fill:url(#image1);
+}
+</style>
+<svg width="200" height="200"
+  xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="image" x="0" y="0" patternUnits="userSpaceOnUse" height="150" width="150">
+      <image href="https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png" x="50" y="50" height="100" width="100" ></image>
+    </pattern>
+    <pattern id="image1" x="0" y="0" patternUnits="userSpaceOnUse" height="150" width="150">
+    <image href="https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png" x="50" y="50" height="100" width="100" style="filter:opacity(.2);"  />
+    </pattern>
+  </defs>
+  <mask id="myMask">
+  <!-- Everything under a white pixel will be visible -->
+  <rect x="0" y="0" width="100%" height="100%" fill="#000" />
+  
+  <!-- Everything under a black pixel will be invisible -->
+ <circle cx="100" cy="100" r="50"  fill="#fff" />
+  </mask>
+  <circle cx="100" cy="100" r="50" stroke="#000" stroke-width="1"  fill="url(#image1)"/>
+  
+</svg>
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <filter id="image">
+      <feImage xlink:href="https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png"/>
+    </filter>
+  </defs>
+
+  <circle cx="50" cy="50" r="50" stroke="#000" stroke-width="1" fill="#3ff"
+      style="filter:url(#image);" />
+</svg>
+<script type="text/javascript">
+let svg=document.querySelector("svg");
+
+let data={
+main:["grand parent main","grand parent spouse"],
+"grand parent main":[
+["parent main1","parent spouse1"],["parent main2","parent spouse2"],["parent main3","parent spouse3"],["parent main4","parent spouse4"],["parent main5"]
+]
+};
+
+let prs='  {"main":["grand parent main","grand parent spouse"],"grand parent main":[["parent main1","parent spouse1"],["parent main2"/*999*/,"parent spouse2"],["parent main3","parent spouse3"],["parent main4","parent spouse4"],["parent main5"]]}';
+prs=prs.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m);
+
+document.write( JSON.stringify(JSON.parse(prs)) )
+function draw(){
+let p=window.getComputedStyle(svg);
+let h=getP(p,"height"),w=getP(p,"width"),
+ss=Math.min(w/7,h/7);
+
+svg.innerHTML=drawR(w/2,h/2,ss*1.75);
+//svg.innerHTML+=`<circle cx="${w/2}" cy="${h/2}" r="${ss*1.15}" stroke="#000" stroke-width="1" fill="#3ff"/>`;
+let d=12,r=ss*2.5,div=360/d;
+let cr=(1.5*Math.PI*r)/d;
+for(let x=0;x<d;x++){
+let x1=(w/2)+r*Math.cos((x*div*Math.PI)/180),y1=(h/2)+r*Math.sin((x*div*Math.PI)/180);
+svg.innerHTML+=drawR(x1,y1,cr);
+}
+
+window.requestAnimationFrame(draw);
+}
+//draw();
+
+
+function getP(p,prop){
+return Number(p.getPropertyValue(prop).match(/\d+/));
+}
+function drawR(x,y,r,f="#fff",s="#000"){
+x-=r/2;
+y-=r/2;
+return `<div style="top:${y}px;left:${x}px;width:${r}px;"></div>`;
+}
+</script>
